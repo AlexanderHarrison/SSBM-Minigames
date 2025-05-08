@@ -21,7 +21,11 @@ struct idk {
 };
 
 void Event_Init(GOBJ *gobj) {
+    monkey = 0;
+    monkey_queued = 0;
     player_count = 0;
+    memset(players, 0, sizeof(players));
+    dk = 0;
 
     stc_memcard->TM_OSDEnabled = 0;
 
