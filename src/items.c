@@ -1,6 +1,7 @@
 #include "../MexTK/mex.h"
 #include "events.h"
 
+static bool in_spawn_mode[6];
 static int item_indices[6];
 static int jumps_used[6];
 static GOBJ *items_left2[6];
@@ -40,7 +41,7 @@ void spawn(FighterData *data, int item, int pos) {
     float x = data->phys.pos.X;
     spawn_item.pos.X = x + pos * 10.f;
     spawn_item.pos2.X = x + pos * 10.f;
-    float y = data->phys.pos.Y + 20.f;
+    float y = data->phys.pos.Y + 20.f - pow(fabs((float)pos * 1.f), 2);
     spawn_item.pos.Y = y;
     spawn_item.pos2.Y = y;
     
@@ -56,6 +57,12 @@ void spawn(FighterData *data, int item, int pos) {
         items_right[i] = it;
     else if (pos == 2)
         items_right2[i] = it;
+        
+    if (pos == 0) {
+        Vec3 offset = {0, 20.f, 0};
+        Vec3 range = {5, 5, 5};
+        Effect_SpawnAsyncLookup(data->fighter, 56, 0, 0, false, &offset, &range);
+    }
 }
 
 void Event_Think(GOBJ *event) {
@@ -64,88 +71,115 @@ void Event_Think(GOBJ *event) {
         if (ch == 0)
             continue;
         FighterData *data = ch->userdata;
-
-        if ((data->input.held & HSD_BUTTON_DPAD_DOWN) == 0) {
-            items[i] = 0;
+        
+        if (!in_spawn_mode[i]) {
+            // NOT in item spawn mode
             
-            if ((data->input.held_prev & HSD_BUTTON_DPAD_DOWN) != 0) {
+            if (data->input.held & HSD_BUTTON_DPAD_DOWN) {
+                if (ASID_JUMPF <= data->state_id && data->state_id <= ASID_FALLAERIALB) {
+                    jumps_used[i] = data->jump.jumps_used;
+                    data->jump.jumps_used = data->attr.max_jumps;
+                    ActionStateChange(0.f, 0.f, 0.f, ch, ASID_FALLSPECIAL, 0, 0);
+                    in_spawn_mode[i] = true;
+                } else if (data->state_id == ASID_WAIT) {
+                    ActionStateChange(0.f, 0.f, 0.f, ch, ASID_SLEEP, 0, 0);
+                    in_spawn_mode[i] = true;
+                }
+            }
+        }
+        
+        if (in_spawn_mode[i]) {
+            // in item spawn mode
+            
+            bool forced_exit;
+            if (data->phys.air_state == 0)
+                forced_exit = data->state_id != ASID_SLEEP;
+            else
+                forced_exit = data->state_id != ASID_FALLSPECIAL;
+            int normal_exit = (data->input.held & HSD_BUTTON_DPAD_DOWN) == 0;
+            
+            GOBJ *it;
+            if (forced_exit) {
+                it = items[i];
+                if (it) Item_Destroy(it);
+            }
+            
+            if (normal_exit & !forced_exit) {
                 if (data->state_id == ASID_FALLSPECIAL) {
                     Fighter_EnterFall(ch);
                     data->jump.jumps_used = jumps_used[i];
+                } else if (data->state_id == ASID_SLEEP) {
+                    Fighter_EnterWait(ch);
                 }
             }
-            jumps_used[i] = 0;
             
-            GOBJ *it = items_left[i];
-            if (it) Item_Destroy(it);
-            items_left[i] = 0;
-            
-            it = items_right[i];
-            if (it) Item_Destroy(it);
-            items_right[i] = 0;
-            
-            it = items_left2[i];
-            if (it) Item_Destroy(it);
-            items_left2[i] = 0;
-            
-            it = items_right2[i];
-            if (it) Item_Destroy(it);
-            items_right2[i] = 0;
-            
-            continue;
-        } 
-
-        if (data->phys.air_state == 1) {
-            if (ASID_JUMPF <= data->state_id && data->state_id <= ASID_FALLAERIALB) {
-                jumps_used[i] = data->jump.jumps_used;
-                Fighter_EnterSpecialFall(ch, 0, 0, 0, 0.f, 1.f);
+            if (normal_exit | forced_exit) {
+                in_spawn_mode[i] = false;
+                items[i] = 0;
+                
+                it = items_left[i];
+                if (it) Item_Destroy(it);
+                items_left[i] = 0;
+                
+                it = items_right[i];
+                if (it) Item_Destroy(it);
+                items_right[i] = 0;
+                
+                it = items_left2[i];
+                if (it) Item_Destroy(it);
+                items_left2[i] = 0;
+                
+                it = items_right2[i];
+                if (it) Item_Destroy(it);
+                items_right2[i] = 0;
             }
             
-            if (jumps_used[i] != 0 && data->state_id == ASID_FALLSPECIAL) { 
+            if (!normal_exit & !forced_exit) {
                 data->phys.self_vel.X /= 1.1f;
-                if (data->phys.self_vel.Y < -0.2f)
-                    data->phys.self_vel.Y = -0.2f;
-            } else {
-                return;
-            }
-        } else {
-            if (data->state_id == ASID_WAIT) { 
-                ActionStateChange(0.f, 0.f, 0.f, ch, ASID_FURAFURA, 0, 0);
-            } else {
-                return;
+                if (data->phys.air_state == 0) {
+                    ActionStateChange(0.f, 0.f, 0.f, ch, ASID_SLEEP, 0, 0);
+                } else {
+                    if (data->phys.self_vel.Y < -0.2f)
+                        data->phys.self_vel.Y = -0.2f;
+                    ActionStateChange(0.f, 0.f, 0.f, ch, ASID_FALLSPECIAL, 0, 0);
+                }
+        
+                int item_idx = item_indices[i];
+                if (data->input.down & HSD_BUTTON_A)
+                    item_idx = wrap_item(item_idx + 1);
+        
+                if (data->input.down & HSD_BUTTON_B)
+                    item_idx = wrap_item(item_idx - 1);
+                item_indices[i] = item_idx;
+                
+                GOBJ *item = items[i];
+                if (item) Item_Destroy(item);
+                item = items_left[i];
+                if (item) Item_Destroy(item);
+                item = items_right[i];
+                if (item) Item_Destroy(item);
+                item = items_left2[i];
+                if (item) Item_Destroy(item);
+                item = items_right2[i];
+                if (item) Item_Destroy(item);
+                
+                spawn(data, allowed_items[item_idx], 0);
+                spawn(data, allowed_items[wrap_item(item_idx-1)], -1);
+                spawn(data, allowed_items[wrap_item(item_idx+1)], +1);
+                spawn(data, allowed_items[wrap_item(item_idx-2)], -2);
+                spawn(data, allowed_items[wrap_item(item_idx+2)], +2);
             }
         }
-
-        int item_idx = item_indices[i];
-        if (data->input.down & HSD_BUTTON_A)
-            item_idx = wrap_item(item_idx + 1);
-
-        if (data->input.down & HSD_BUTTON_B)
-            item_idx = wrap_item(item_idx - 1);
-        item_indices[i] = item_idx;
-        
-        GOBJ *item = items[i];
-        if (item) Item_Destroy(item);
-        
-        item = items_left[i];
-        if (item) Item_Destroy(item);
-        item = items_right[i];
-        if (item) Item_Destroy(item);
-        item = items_left2[i];
-        if (item) Item_Destroy(item);
-        item = items_right2[i];
-        if (item) Item_Destroy(item);
-        
-        spawn(data, allowed_items[item_idx], 0);
-        spawn(data, allowed_items[wrap_item(item_idx-1)], -1);
-        spawn(data, allowed_items[wrap_item(item_idx+1)], +1);
-        spawn(data, allowed_items[wrap_item(item_idx-2)], -2);
-        spawn(data, allowed_items[wrap_item(item_idx+2)], +2);
     }
 }
 
 void Event_Init(GOBJ *event) {
+    memset(in_spawn_mode, 0, sizeof(in_spawn_mode));
     memset(item_indices, 0, sizeof(item_indices));
+    memset(items_left, 0, sizeof(items_left));
+    memset(items_left2, 0, sizeof(items_left2));
     memset(items, 0, sizeof(items));
-    memset(&spawn_item, 0, sizeof(spawn_item));
+    memset(items_right, 0, sizeof(items_right));
+    memset(items_right2, 0, sizeof(items_right2));
+    memset(jumps_used, 0, sizeof(jumps_used));
 }
