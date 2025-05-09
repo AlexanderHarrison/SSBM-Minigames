@@ -192,7 +192,7 @@ static EventDesc *General_Events[] = {
     &Items,
     &RJJ,
     &Hitfall,
-    &Meter
+    //&Meter
 };
 static EventPage General_Page = {
     .name = "Minigames!",
