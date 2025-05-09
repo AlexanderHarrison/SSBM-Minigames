@@ -65,6 +65,9 @@ void Event_Init(GOBJ *gobj) {
 void Event_Update() { }
 
 static int end_timer = -1;
+static int eightball_timer = -1;
+static GOBJ *loser;
+
 void Event_Think(GOBJ *event) {
     int alive_count = 0;
     GOBJ *dead = 0;
@@ -80,9 +83,8 @@ void Event_Think(GOBJ *event) {
     int any_dead = false;
 
     if (alive_count < 3) {
-        GOBJ *loser = dead;
-
         if (end_timer == -1) {
+            loser = dead;
             end_timer = 0;
 
             // 8ball rule check
@@ -96,9 +98,29 @@ void Event_Think(GOBJ *event) {
                         end_timer = 80;
                         loser = killer;
                         SFX_Play(40008); // FAILURE
+                        eightball_timer = 40;
                     }
                 }
             }
+        }
+        
+        if (eightball_timer == 0) {
+            eightball_timer = -1;
+            
+            GOBJ *killer = loser;
+            FighterData *killer_data = killer->userdata;
+            Fighter_SetStocks(killer_data->ply, 0);
+            Fighter_EnterDeadDown(killer);
+            
+            FighterData *dead_data = dead->userdata;
+            Fighter_SetStocks(dead_data->ply, 1);
+        } else if (eightball_timer > 0) {
+            GOBJ *killer = loser;
+            Vec3 offset = {0};
+            Vec3 range = {20, 20, 20};
+            Effect_SpawnAsyncLookup(killer, 25, 0, 0, false, &offset, &range);
+            
+            eightball_timer--;
         }
 
         if (end_timer == 0) {
@@ -112,7 +134,7 @@ void Event_Think(GOBJ *event) {
             }
         
             Match_EndImmediate();
-        } else {
+        } else if (end_timer > 0) {
             end_timer--;
         }
     } else {
