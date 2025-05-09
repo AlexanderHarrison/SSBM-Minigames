@@ -12,7 +12,7 @@
   # 1: in game 
   # 2: sss
   # 3: results   
-  li r3, 0
+  li r3, 3
   branchl r12, Scene_SetNextMinor
 
   restore

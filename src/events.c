@@ -317,7 +317,11 @@ void EventInit(int page, int eventID, MatchInit *matchData)
     }
 
     Preload *preload = Preload_GetTable();
-    matchData->stage = preload->queued.stage;
+    int stage = eventMatchData->stage;
+    if (stage == -1)
+        matchData->stage = preload->queued.stage;
+    else
+        matchData->stage = stage;
 
     return;
 };
