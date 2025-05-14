@@ -7,6 +7,9 @@
 
   backup
   
+  #mr r3, r27
+  #branchl r12, 0x801b15c8 # SceneDecide_EventMode_InGame
+    
   # instead of going back to the event screen, go to the new scene we've added
   # 0: css
   # 1: in game 

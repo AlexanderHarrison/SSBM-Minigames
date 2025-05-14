@@ -88,7 +88,7 @@ void Event_Think(GOBJ *event) {
             end_timer = 0;
 
             // 8ball rule check
-            if (monkey != dead && dead != 0) {
+            if (monkey != dead && dead != 0 && monkey != 0) {
                 FighterData *dead_data = dead->userdata;
                 int killer_ply = dead_data->dmg.source_ply;
                 if (killer_ply != 6) {
@@ -133,11 +133,13 @@ void Event_Think(GOBJ *event) {
                 stats_something += 42;
             }
             
+            bp();
             for (int i = 0; i < 4; ++i) {
                 if (Fighter_GetGObj(i) && Fighter_GetStocks(i))
                     Fighter_SetStocks(i, 1);
+                Fighter_GetPlayerblock(i)->x88 = stc_match->time_frames;
             }
-        
+            
             Match_EndImmediate();
         } else if (end_timer > 0) {
             end_timer--;

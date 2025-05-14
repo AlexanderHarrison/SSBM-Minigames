@@ -812,14 +812,14 @@ struct Playerblock
     u16 damage;          // 0x5c
     u16 initialDamage;   // 0x5e
     u16 stamina;         // 0x60
-    int falls[2];        // 0x68
-    int ko[6];           // 0x70
-    int x88;
+    int falls[2];        // 0x64
+    int ko[6];           // 0x6c
+    int x84;            
+    int x88;            
     u16 selfDestructs;
     u8 stocks;
     int coins_curr;
     int coins_total;
-    int x98;
     int x9c;
     int stickSmashes[2];
     int tag;
