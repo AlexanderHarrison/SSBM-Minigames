@@ -132,6 +132,11 @@ void Event_Think(GOBJ *event) {
                     stats_something[30] = 1;
                 stats_something += 42;
             }
+            
+            for (int i = 0; i < 4; ++i) {
+                if (Fighter_GetGObj(i) && Fighter_GetStocks(i))
+                    Fighter_SetStocks(i, 1);
+            }
         
             Match_EndImmediate();
         } else if (end_timer > 0) {
