@@ -806,6 +806,7 @@ struct Playerblock
     u8 kirby_copy;       // 0x4d, index of kirby copy ability
     u8 x4e;              // 0x4e
     u8 x4f;              // 0x4f
+    int idx; // necessary...            
     float attack;        // 0x50
     float defense;       // 0x54
     float scale;         // 0x58
@@ -814,7 +815,6 @@ struct Playerblock
     u16 stamina;         // 0x60
     int falls[2];        // 0x64
     int ko[6];           // 0x6c
-    int x84;            
     int x88;            
     u16 selfDestructs;
     u8 stocks;
