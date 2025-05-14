@@ -1,7 +1,7 @@
 #include "../MexTK/mex.h"
 
-#define TM_VERSSHORT "Minigames v1.0"
-#define TM_VERSLONG "Minigames v1.0"
+#define TM_VERSSHORT "Minigames v1"
+#define TM_VERSLONG "Minigames v1"
 #define TM_DEBUG 1 // 0 = release (no logging), 1 = OSReport logs, 2 = onscreen logs
 #define EVENT_DATASIZE 512
 #define TM_FUNC -(50 * 4)
