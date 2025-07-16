@@ -1,7 +1,7 @@
 #include "../MexTK/mex.h"
 
-#define TM_VERSSHORT "Minigames v1"
-#define TM_VERSLONG "Minigames v1"
+#define TM_VERSSHORT "Minigames v1.1"
+#define TM_VERSLONG "Minigames v1.1"
 #define TM_DEBUG 1 // 0 = release (no logging), 1 = OSReport logs, 2 = onscreen logs
 #define EVENT_DATASIZE 512
 #define TM_FUNC -(50 * 4)
@@ -87,6 +87,7 @@ typedef struct EventDesc
     u8 use_savestates : 1;  // enables dpad left and right savestates
     u8 disable_hazards : 1; // removes stage hazards
     u8 force_sopo : 1;
+    u8 balanced_chars : 1;
     u8 scoreType;
     u8 callbackPriority;
     EventMatchData *matchData;
@@ -351,6 +352,7 @@ typedef struct EventVars
     GOBJ *menu_gobj;                                                                         // event menu gobj
     int game_timer;                                                                          // amount of game frames passed
     u8 hide_menu;                                                                            // enable this to hide the base menu. used for custom menus.
+    u8 balanced_chars;
     int (*Savestate_Save)(Savestate *savestate);                                             // function pointer to save state
     int (*Savestate_Load)(Savestate *savestate, int is_mirrored);                            // function pointer to load state
     GOBJ *(*Message_Display)(int msg_kind, int queue_num, int msg_color, char *format, ...); // function pointer to display message

@@ -181,6 +181,37 @@ EventDesc Meter = {
     .defaultOSD = 0xFFFFFFFF,
 };
 
+EventDesc Aerials = {
+    .eventName = "Aerial Anarchy\n",
+    .eventDescription = "Aerials may be swapped\nwith tilts and smashes!\n",
+    .eventFile = "aerial",
+    .isChooseCPU = true,
+    .isSelectStage = true,
+    .use_savestates = false,
+    .disable_hazards = false,
+    .force_sopo = false,
+    .scoreType = 0,
+    .callbackPriority = 3,
+    .matchData = &MatchData,
+    .defaultOSD = 0xFFFFFFFF,
+};
+
+EventDesc Rebalanced = {
+    .eventName = "Rebalanced\n",
+    .eventDescription = "Rebalanced Melee! Bottom and\nlow tiers have been greatly buffed.\n",
+    .eventFile = "balance",
+    .isChooseCPU = true,
+    .isSelectStage = true,
+    .use_savestates = false,
+    .disable_hazards = false,
+    .force_sopo = false,
+    .scoreType = 0,
+    .balanced_chars = 1,
+    .callbackPriority = 3,
+    .matchData = &MatchData,
+    .defaultOSD = 0xFFFFFFFF,
+};
+
 ///////////////////////
 /// Page Defintions ///
 ///////////////////////
@@ -189,8 +220,10 @@ static EventDesc *General_Events[] = {
     &Monkey,
     &Items,
     &RJJ,
+    &Aerials,
+    &Rebalanced,
     &Hitfall,
-    //&Meter
+    // &Meter,
 };
 static EventPage General_Page = {
     .name = "Minigames!",
@@ -248,6 +281,8 @@ void EventInit(int page, int eventID, MatchInit *matchData)
 
     // get event pointer
     EventDesc *event = GetEventDesc(page, eventID);
+    
+    stc_event_vars.balanced_chars = event->balanced_chars;
 
     //Init default match info
     matchData->timer_unk2 = 0;

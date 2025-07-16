@@ -1,6 +1,6 @@
 .PHONY: clean iso all release
 
-dats = build/eventMenu.dat build/monkey.dat build/items.dat build/jj.dat build/hitfall.dat build/meter.dat
+dats = build/eventMenu.dat build/monkey.dat build/items.dat build/jj.dat build/hitfall.dat build/meter.dat build/aerial.dat build/balance.dat
 
 # find all .asm and .s files in the ASM dir. We have the escape the spaces, so we pipe to sed
 ASM_FILES := $(shell find ASM -type f \( -name '*.asm' -o -name '*.s' \) | sed 's/ /\\ /g')
@@ -47,6 +47,12 @@ build/hitfall.dat: src/hitfall.c src/events.h
 build/meter.dat: src/meter.c src/events.h
 	$(MEX_BUILD) -i "src/meter.c" -s "evFunction" -dat "build/meter.dat" -t "MexTK/evFunction.txt"
 
+build/aerial.dat: src/aerial.c src/events.h
+	$(MEX_BUILD) -i "src/aerial.c" -s "evFunction" -dat "build/aerial.dat" -t "MexTK/evFunction.txt"
+
+build/balance.dat: src/balance.c src/events.h
+	$(MEX_BUILD) -i "src/balance.c" -s "evFunction" -dat "build/balance.dat" -t "MexTK/evFunction.txt"
+
 build/codes.gct: Additional\ ISO\ Files/opening.bnr $(ASM_FILES)
 	cd "Build TM Codeset" && ./gecko build
 	cp Additional\ ISO\ Files/* build/
@@ -67,7 +73,19 @@ Minigames.iso: build/Start.dol build/codes.gct $(dats)
 		insert TM/jj.dat build/jj.dat \
 		insert TM/hitfall.dat build/hitfall.dat \
 		insert TM/meter.dat build/meter.dat \
-		insert PlPc.dat PlPc_bl.dat \
+		insert TM/aerial.dat build/aerial.dat \
+		insert TM/balance.dat build/balance.dat \
+		insert PlCl_bl.dat balance/PlCl_bl.dat \
+		insert PlGw_bl.dat balance/PlGw_bl.dat \
+		insert PlKp_bl.dat balance/PlKp_bl.dat \
+		insert PlMr_bl.dat balance/PlMr_bl.dat \
+		insert PlNs_bl.dat balance/PlNs_bl.dat \
+		insert PlZd_bl.dat balance/PlZd_bl.dat \
+		insert PlFe_bl.dat balance/PlFe_bl.dat \
+		insert PlKb_bl.dat balance/PlKb_bl.dat \
+		insert PlLk_bl.dat balance/PlLk_bl.dat \
+		insert PlMt_bl.dat balance/PlMt_bl.dat \
+		insert PlPc_bl.dat balance/PlPc_bl.dat \
 		insert codes.gct build/codes.gct \
 		insert Start.dol build/Start.dol \
 		insert opening.bnr build/opening.bnr
