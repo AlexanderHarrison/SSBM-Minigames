@@ -11,7 +11,10 @@ static GOBJ *items_right[6];
 static GOBJ *items_right2[6];
 static SpawnItem spawn_item;
 
-static const u8 allowed_items[] = {
+static u8 allowed_items[32];
+static int item_count;
+
+static const u8 DEFAULT_ITEMS[] = {
     ITEM_GREENSHELL,
     ITEM_BEAMSWORD,
     ITEM_HOMERUNBAT,
@@ -24,17 +27,82 @@ static const u8 allowed_items[] = {
     ITEM_BUNNYHOOD,
 };
 
-#define ITEM_MAX (sizeof(allowed_items)/sizeof(*allowed_items))
+static const u8 ITEM_LOOKUP[] = {
+    ITEM_BOBOMB,
+    ITEM_HOMERUNBAT,
+    ITEM_MRSATURN,
+    ITEM_FIREFLOWER,
+    ITEM_FLIPPER,
+    ITEM_FOOD,
+    ITEM_FREEZIE,
+    ITEM_GREENSHELL,
+    ITEM_HAMMER,
+    ITEM_FAN,
+    ITEM_HEARTCONTAINER,
+    ITEM_SUPERMUSHROOM,
+    ITEM_PARTYBALL,
+    ITEM_RAYGUN,
+    ITEM_LIPSSTICK,
+    ITEM_POKEBALL,
+    ITEM_METALBOX,
+    ITEM_MOTIONSENSORBOMB,
+    ITEM_MAXIMTOMATO,
+    ITEM_CLOAKINGDEVICE,
+    ITEM_PARASOL,
+    ITEM_REDSHELL,
+    ITEM_BUNNYHOOD,
+    ITEM_STARROD,
+    ITEM_SUPERSCOPE,
+    ITEM_SCREWATTACK,
+    ITEM_STARMAN,
+    ITEM_BEAMSWORD,
+    255,
+    ITEM_BARRELCANNON,
+    ITEM_WARPSTAR,
+    ITEM_POISONMUSHROOM,
+};
 
-int wrap_item(int i) {
+/*poison mushroom 80 00 00 00
+warp 40 00 00 00
+barrel cannon 20 00 00 00
+beam sword 8 00 00 00
+starman 4 00 00 00
+screw attack 2 00 00 00
+super scope 1 00 00 00
+star rod 80 00 00
+bunny hood 40 00 00
+red shell 20 00 00
+parasol 10 00 00
+cloaking 8 00 00
+tomato 4 00 00
+motion sensor bomb 2 00 00
+metal box 1 00 00
+pokeball 80 00
+lips stick 40 00
+ray gun 20 00
+party ball 10 00
+super mushroom 8 00
+heart container 4 00
+fan 2 00
+hammer 100
+green shell 80
+freezie 40
+food 20
+flipper 10
+fire flower 8
+saturn 4
+bat 2
+bobomb 1*/
+
+static int wrap_item(int i) {
     while (i < 0)
-        i += ITEM_MAX;
-    while (i >= ITEM_MAX)
-        i -= ITEM_MAX;
+        i += item_count;
+    while (i >= item_count)
+        i -= item_count;
     return i;
 }
 
-void spawn(FighterData *data, int item, int pos) {
+static void spawn(FighterData *data, int item, int pos) {
     spawn_item.it_kind = item;
     spawn_item.facing_direction = data->facing_direction;
 
@@ -172,8 +240,27 @@ void Event_Think(GOBJ *event) {
         }
     }
 }
+u32 *LoadRulesSettingsPointer4(void);
 
 void Event_Init(GOBJ *event) {
+    event_vars = *event_vars_ptr;
+    
+    u32 *rules = LoadRulesSettingsPointer4();
+    u32 spawn_items = rules[3];
+    item_count = 0;
+    for (u32 i = 0; i < 32; ++i) {
+        if ((spawn_items >> i) & 1) {
+            u8 it = ITEM_LOOKUP[i];
+            if (it != 255)
+                allowed_items[item_count++] = it;
+        }
+    }
+    
+    if (item_count == 0) {
+        item_count = sizeof(DEFAULT_ITEMS)/sizeof(DEFAULT_ITEMS[0]);
+        memcpy(allowed_items, DEFAULT_ITEMS, sizeof(DEFAULT_ITEMS));
+    }
+    
     memset(in_spawn_mode, 0, sizeof(in_spawn_mode));
     memset(item_indices, 0, sizeof(item_indices));
     memset(items_left, 0, sizeof(items_left));

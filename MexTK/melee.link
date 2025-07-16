@@ -1,4 +1,5 @@
 80388220:__assert
+8015cc58:LoadRulesSettingsPointer4
 80323938:memmove
 80323DC8:_vsprintf
 80068E98:Fighter_Create
