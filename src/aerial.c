@@ -12,10 +12,10 @@ static void swap(void *av, void *bv, int size) {
 }
 
 swap3(FighterData *d, int a, int b, int c) {
-    int i = HSD_Randi(3);
-    if (i == 0)
+    int i = HSD_Randi(2);
+    if (i)
         swap(d->ftaction + a, d->ftaction + b, sizeof(FtAction));
-    if (i == 1)
+    else
         swap(d->ftaction + a, d->ftaction + c, sizeof(FtAction));
 }
 
@@ -27,7 +27,7 @@ swap3(FighterData *d, int a, int b, int c) {
 // utilt 58
 // dtilt 59
 
-// fsmash 65
+// fsmash 60 - 64
 // usmash 66
 // dsmash 67
 
@@ -39,18 +39,28 @@ swap3(FighterData *d, int a, int b, int c) {
 
 void ShuffleAerials(GOBJ *ft) {
     FighterData *d = ft->userdata;
+    HSD_Pad *pad = PadGet(d->pad_index, PADGET_MASTER);
+    
     swap3(d, 68, 52, 46);
-    swap3(d, 69, 55, 65);
+    
+    if ((pad->held & PAD_BUTTON_B) == 0)
+        swap3(d, 69, 55, 62);
+    else
+        swap(d->ftaction + 69, d->ftaction + 65, sizeof(FtAction));
+        
     swap3(d, 71, 58, 66);
     swap3(d, 72, 59, 67);
 }
 
-void Event_Init(GOBJ *gobj) {
-    for (int ply = 0; ply < 4; ++ply) {
-        GOBJ *ft = Fighter_GetGObj(ply);
-        if (ft)
-            ShuffleAerials(ft);
+void Event_Think(GOBJ *event) {
+    static bool thunk = false;
+    if (!thunk) {
+        thunk = true;
+        for (int ply = 0; ply < 4; ++ply) {
+            GOBJ *ft = Fighter_GetGObj(ply);
+            if (ft)
+                ShuffleAerials(ft);
+        }
     }
 }
-void Event_Think(GOBJ *event) {}
 
