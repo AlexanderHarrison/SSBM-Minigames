@@ -1,6 +1,6 @@
 .PHONY: clean iso all release
 
-dats = build/eventMenu.dat build/monkey.dat build/items.dat build/jj.dat build/hitfall.dat build/meter.dat build/aerial.dat build/balance.dat
+dats = build/eventMenu.dat build/monkey.dat build/items.dat build/jj.dat build/hitfall.dat build/meter.dat build/aerial.dat build/balance.dat build/attrswap.dat
 
 # find all .asm and .s files in the ASM dir. We have the escape the spaces, so we pipe to sed
 ASM_FILES := $(shell find ASM -type f \( -name '*.asm' -o -name '*.s' \) | sed 's/ /\\ /g')
@@ -53,6 +53,9 @@ build/aerial.dat: src/aerial.c src/events.h
 build/balance.dat: src/balance.c src/events.h
 	$(MEX_BUILD) -i "src/balance.c" -s "evFunction" -dat "build/balance.dat" -t "MexTK/evFunction.txt"
 
+build/attrswap.dat: src/attrswap.c src/events.h
+	$(MEX_BUILD) -i "src/attrswap.c" -s "evFunction" -dat "build/attrswap.dat" -t "MexTK/evFunction.txt"
+
 build/codes.gct: Additional\ ISO\ Files/opening.bnr $(ASM_FILES)
 	cd "Build TM Codeset" && ./gecko build
 	cp Additional\ ISO\ Files/* build/
@@ -75,6 +78,7 @@ Minigames.iso: build/Start.dol build/codes.gct $(dats)
 		insert TM/meter.dat build/meter.dat \
 		insert TM/aerial.dat build/aerial.dat \
 		insert TM/balance.dat build/balance.dat \
+		insert TM/attrswap.dat build/attrswap.dat \
 		insert PlCl_bl.dat balance/PlCl_bl.dat \
 		insert PlGw_bl.dat balance/PlGw_bl.dat \
 		insert PlKp_bl.dat balance/PlKp_bl.dat \

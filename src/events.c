@@ -196,6 +196,21 @@ EventDesc Aerials = {
     .defaultOSD = 0xFFFFFFFF,
 };
 
+EventDesc AttrSwap = {
+    .eventName = "Attribute Swap\n",
+    .eventDescription = "Swap movement attributes\nwith the opponent!\n",
+    .eventFile = "attrswap",
+    .isChooseCPU = true,
+    .isSelectStage = true,
+    .use_savestates = false,
+    .disable_hazards = false,
+    .force_sopo = false,
+    .scoreType = 0,
+    .callbackPriority = 3,
+    .matchData = &MatchData,
+    .defaultOSD = 0xFFFFFFFF,
+};
+
 EventDesc Rebalanced = {
     .eventName = "Rebalanced\n",
     .eventDescription = "Rebalanced Melee! Bottom and\nlow tiers have been greatly buffed.\n",
@@ -221,6 +236,7 @@ static EventDesc *General_Events[] = {
     &Items,
     &RJJ,
     &Aerials,
+    &AttrSwap,
     &Rebalanced,
     &Hitfall,
     // &Meter,
