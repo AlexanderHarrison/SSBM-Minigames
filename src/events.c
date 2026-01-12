@@ -45,6 +45,37 @@ static EventMatchData MonkeyMatchData = {
     .no_check_end = 1,
 };
 
+static EventMatchData WipeoutMatchData = {
+    .timer = MATCH_TIMER_HIDE,
+    .matchType = 0,
+    .isDisableMusic = false,
+    .hideGo = false,
+    .hideReady = false,
+    .isCreateHUD = true,
+    .isDisablePause = false,
+    .timerRunOnPause = false,
+    .isHidePauseHUD = false,
+    .isShowLRAStart = true,
+    .isCheckForLRAStart = true,
+    .isShowZRetry = false,
+    .isCheckForZRetry = false,
+    .isShowAnalogStick = false,
+    .isShowScore = false,
+
+    .isRunStockLogic = false,
+    .isDisableHit = false,
+    .useKOCounter = true,
+    .playerKind = -1,
+    .cpuKind = -1,
+    .stage = -1,
+    .timerSeconds = 0,
+    .timerSubSeconds = 0,
+    .itemFreq = MATCH_ITEMFREQ_OFF,
+    .itemSwitch = 0,
+    .no_check_end = 1,
+    .is_teams = 1,
+};
+
 static EventMatchData MatchData = {
     .timer = MATCH_TIMER_COUNTDOWN,
     .matchType = MATCH_MATCHTYPE_STOCK,
@@ -118,6 +149,21 @@ EventDesc Monkey = {
     .scoreType = 0,
     .callbackPriority = 3,
     .matchData = &MonkeyMatchData,
+    .defaultOSD = 0xFFFFFFFF,
+};
+
+EventDesc Wipeout = {
+    .eventName = "Wipeout\n",
+    .eventDescription = "TEAMS ONLY! Defeat opponents\nsimultaneously to win!\n",
+    .eventFile = "wipeout",
+    .isChooseCPU = true,
+    .isSelectStage = true,
+    .use_savestates = false,
+    .disable_hazards = false,
+    .force_sopo = false,
+    .scoreType = 0,
+    .callbackPriority = 3,
+    .matchData = &WipeoutMatchData,
     .defaultOSD = 0xFFFFFFFF,
 };
 
@@ -233,6 +279,7 @@ EventDesc Rebalanced = {
 
 static EventDesc *General_Events[] = {
     &Monkey,
+    &Wipeout,
     &Items,
     &RJJ,
     &Aerials,
@@ -312,6 +359,7 @@ void EventInit(int page, int eventID, MatchInit *matchData)
     EventMatchData *eventMatchData = event->matchData;
     matchData->no_check_end = eventMatchData->no_check_end;
     matchData->itemFreq = eventMatchData->itemFreq;
+    matchData->is_teams = eventMatchData->is_teams;
     matchData->itemSwitch = eventMatchData->itemSwitch;
     matchData->timer = eventMatchData->timer;
     matchData->matchType = eventMatchData->matchType;

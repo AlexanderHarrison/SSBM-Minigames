@@ -133,7 +133,6 @@ void Event_Think(GOBJ *event) {
                 stats_something += 42;
             }
             
-            bp();
             for (int i = 0; i < 4; ++i) {
                 if (Fighter_GetGObj(i) && Fighter_GetStocks(i))
                     Fighter_SetStocks(i, 1);

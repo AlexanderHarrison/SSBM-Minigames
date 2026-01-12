@@ -67,6 +67,7 @@ typedef struct EventMatchData //r8
     unsigned int isDisableHit : 1;       // 0x20
     unsigned int useKOCounter : 1;
     unsigned int no_check_end : 1;
+    unsigned int is_teams : 1;
     s8 playerKind;                    // -1 = use selected fighter
     s8 cpuKind;                       // -1 = no CPU
     s16 stage;                        // -1 = use selected stage
