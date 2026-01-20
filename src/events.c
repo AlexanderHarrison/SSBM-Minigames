@@ -45,6 +45,36 @@ static EventMatchData MonkeyMatchData = {
     .no_check_end = 1,
 };
 
+static EventMatchData Monkey2MatchData = {
+    .timer = MATCH_TIMER_HIDE,
+    .matchType = 0,
+    .isDisableMusic = false,
+    .hideGo = false,
+    .hideReady = false,
+    .isCreateHUD = true,
+    .isDisablePause = false,
+    .timerRunOnPause = false,
+    .isHidePauseHUD = false,
+    .isShowLRAStart = true,
+    .isCheckForLRAStart = true,
+    .isShowZRetry = false,
+    .isCheckForZRetry = false,
+    .isShowAnalogStick = false,
+    .isShowScore = false,
+
+    .isRunStockLogic = false,
+    .isDisableHit = false,
+    .useKOCounter = true,
+    .playerKind = -1,
+    .cpuKind = -1,
+    .stage = -1,
+    .timerSeconds = 0,
+    .timerSubSeconds = 0,
+    .itemFreq = MATCH_ITEMFREQ_OFF,
+    .itemSwitch = 0,
+    .no_check_end = 1,
+};
+
 static EventMatchData WipeoutMatchData = {
     .timer = MATCH_TIMER_HIDE,
     .matchType = 0,
@@ -139,7 +169,7 @@ static EventMatchData JJMatchData = {
 
 EventDesc Monkey = {
     .eventName = "Monkey in the Middle\n",
-    .eventDescription = "Free practice with\ncomplete control.\n",
+    .eventDescription = "Defeat the monkey to win!\n",
     .eventFile = "monkey",
     .isChooseCPU = true,
     .isSelectStage = true,
@@ -149,6 +179,21 @@ EventDesc Monkey = {
     .scoreType = 0,
     .callbackPriority = 3,
     .matchData = &MonkeyMatchData,
+    .defaultOSD = 0xFFFFFFFF,
+};
+
+EventDesc Monkey2 = {
+    .eventName = "Monkey in the Middle 2\n",
+    .eventDescription = "Defeat the monkey to win!\n",
+    .eventFile = "monkey2",
+    .isChooseCPU = true,
+    .isSelectStage = true,
+    .use_savestates = false,
+    .disable_hazards = false,
+    .force_sopo = false,
+    .scoreType = 0,
+    .callbackPriority = 3,
+    .matchData = &Monkey2MatchData,
     .defaultOSD = 0xFFFFFFFF,
 };
 
@@ -279,6 +324,7 @@ EventDesc Rebalanced = {
 
 static EventDesc *General_Events[] = {
     &Monkey,
+    &Monkey2,
     &Wipeout,
     &Items,
     &RJJ,

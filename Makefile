@@ -1,6 +1,6 @@
 .PHONY: clean iso all release
 
-dats = build/eventMenu.dat build/monkey.dat build/items.dat build/jj.dat build/hitfall.dat build/meter.dat build/aerial.dat build/balance.dat build/attrswap.dat build/wipeout.dat
+dats = build/eventMenu.dat build/monkey.dat build/monkey2.dat build/items.dat build/jj.dat build/hitfall.dat build/meter.dat build/aerial.dat build/balance.dat build/attrswap.dat build/wipeout.dat
 
 # find all .asm and .s files in the ASM dir. We have the escape the spaces, so we pipe to sed
 ASM_FILES := $(shell find ASM -type f \( -name '*.asm' -o -name '*.s' \) | sed 's/ /\\ /g')
@@ -34,6 +34,9 @@ build/eventMenu.dat: src/events.c src/events.h
 
 build/monkey.dat: src/monkey.c src/events.h
 	$(MEX_BUILD) -i "src/monkey.c" -s "evFunction" -dat "build/monkey.dat" -t "MexTK/evFunction.txt"
+
+build/monkey2.dat: src/monkey2.c src/events.h
+	$(MEX_BUILD) -i "src/monkey2.c" -s "evFunction" -dat "build/monkey2.dat" -t "MexTK/evFunction.txt"
 
 build/items.dat: src/items.c src/events.h
 	$(MEX_BUILD) -i "src/items.c" -s "evFunction" -dat "build/items.dat" -t "MexTK/evFunction.txt"
@@ -75,6 +78,7 @@ Minigames.iso: build/Start.dol build/codes.gct $(dats)
 		delete MvOpen.mth \
 		insert TM/eventMenu.dat build/eventMenu.dat \
 		insert TM/monkey.dat build/monkey.dat \
+		insert TM/monkey2.dat build/monkey2.dat \
 		insert TM/items.dat build/items.dat \
 		insert TM/jj.dat build/jj.dat \
 		insert TM/hitfall.dat build/hitfall.dat \
