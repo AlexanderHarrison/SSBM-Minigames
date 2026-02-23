@@ -106,6 +106,38 @@ static EventMatchData WipeoutMatchData = {
     .is_teams = 1,
 };
 
+static EventMatchData CharSwapMatchData = {
+    .timer = MATCH_TIMER_HIDE,
+    .matchType = 0,
+    .isDisableMusic = false,
+    .hideGo = false,
+    .hideReady = false,
+    .isCreateHUD = true,
+    .isDisablePause = false,
+    .timerRunOnPause = false,
+    .isHidePauseHUD = false,
+    .isShowLRAStart = true,
+    .isCheckForLRAStart = true,
+    .isShowZRetry = false,
+    .isCheckForZRetry = false,
+    .isShowAnalogStick = false,
+    .isShowScore = false,
+
+    .isRunStockLogic = true,
+    .isDisableHit = false,
+    .useKOCounter = true,
+    .playerKind = -1,
+    .cpuKind = -1,
+    .stage = -1,
+    .timerSeconds = 0,
+    .stockCount = 4,
+    .timerSubSeconds = 0,
+    .itemFreq = MATCH_ITEMFREQ_OFF,
+    .itemSwitch = 0,
+    .no_check_end = 0,
+    .is_teams = 1,
+};
+
 static EventMatchData MatchData = {
     .timer = MATCH_TIMER_COUNTDOWN,
     .matchType = MATCH_MATCHTYPE_STOCK,
@@ -209,6 +241,21 @@ EventDesc Wipeout = {
     .scoreType = 0,
     .callbackPriority = 3,
     .matchData = &WipeoutMatchData,
+    .defaultOSD = 0xFFFFFFFF,
+};
+
+EventDesc CharSwap = {
+    .eventName = "Tag In Singles\n",
+    .eventDescription = "TEAMS ONLY!\nTag in using DPad Down!\n",
+    .eventFile = "charswap",
+    .isChooseCPU = true,
+    .isSelectStage = true,
+    .use_savestates = false,
+    .disable_hazards = false,
+    .force_sopo = false,
+    .scoreType = 0,
+    .callbackPriority = 20,
+    .matchData = &CharSwapMatchData,
     .defaultOSD = 0xFFFFFFFF,
 };
 
@@ -326,6 +373,7 @@ static EventDesc *General_Events[] = {
     &Monkey,
     &Monkey2,
     &Wipeout,
+    &CharSwap,
     &Items,
     &RJJ,
     &Aerials,
